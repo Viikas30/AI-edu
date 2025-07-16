@@ -7,7 +7,7 @@ import {
 
 const QDRANT_CLOUD_BASE_URL = 'https://1bcdfef2-22c6-44f9-a2fa-adc4a4ca5e4e.europe-west3-0.gcp.cloud.qdrant.io:6333';
 const QDRANT_API_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3MiOiJtIn0.erRscERUav-m7n0_T5FbZkvCFakbTMlcuM5Rqu-Q038';
-const COLLECTION_NAME = 'ncert-vectors';
+const COLLECTION_NAME = 'ncert-clas11-phy-vectors';
 
 const dotProduct = (a, b) => a.reduce((sum, val, i) => sum + val * b[i], 0);
 
@@ -76,7 +76,7 @@ const handleSearch = async () => {
   try {
     console.log('Requesting embedding from server...');
     const embeddingArray = await getEmbeddingFromServer(queryText);
-    console.log('Embedding:', embeddingArray, Array.isArray(embeddingArray), 'Length:', embeddingArray.length);
+    // console.log('Embedding:', embeddingArray, Array.isArray(embeddingArray), 'Length:', embeddingArray.length);
 
     if (!Array.isArray(embeddingArray) || embeddingArray.some(v => typeof v !== 'number' || isNaN(v))) {
       throw new Error('Invalid embedding array received from server');
@@ -126,6 +126,7 @@ const handleSearch = async () => {
             <Text>Class: {hit.payload?.class || 'N/A'}</Text>
             <Text>Subject: {hit.payload?.subject || 'N/A'}</Text>
             <Text>Chapter: {hit.payload?.chapter || 'N/A'}</Text>
+            <Text>Chapter name: {hit.payload?.chapter_name || 'N/A'}</Text>
             <Text>Page: {hit.payload?.page || 'N/A'}</Text>
             <Text style={styles.contentSnippet}>
               {hit.payload?.content?.slice(0, 300) + '...' || 'No content'}
