@@ -5,6 +5,7 @@ import VideoRow from '../components/VideoRow';
 import { channels } from '../data/channels';
 import { getMultipleChannelsVideos } from '../services/youtubeService';
 import ResultWidget from '../components/ResultWidget';
+import VerticalVideoList from '../components/VerticalVideoList';
 
 
 const fetchAIGeneratedPara = async ({ chapter }) => {
@@ -73,7 +74,9 @@ const VideoPlayerScreen = ({ route, navigation }) => {
   React.useEffect(() => {
     const fetchRelated = async () => {
       const all = await getMultipleChannelsVideos(channels);
-      const flat = all.flatMap((c) => c.videos).filter(v => v.id !== video.id);
+      const flat = all
+  .flatMap((c) => c.videos)
+  .filter(v => v.id !== video.id && v.channelName === video.channelName);
       setRelatedVideos(flat.slice(0, 5));
     };
     fetchRelated();
@@ -120,12 +123,13 @@ const VideoPlayerScreen = ({ route, navigation }) => {
     <ScrollView style={styles.container}>
       <YouTubePlayer videoUrl={video.url} />
       <Text style={styles.title}>{video.title}</Text>
+      <Text style={styles.channelName}>{video.channelName}</Text>
 
       {/* NCERT Result Widget: show AI para and metadata */}
       <ResultWidget loading={ncertLoading} aiPara={aiPara} metadata={retrievedMeta} />
 
       <Text style={styles.subheading}>Recommended Videos</Text>
-      <VideoRow
+      <VerticalVideoList
         videos={relatedVideos}
         title=""
         onSelect={(selectedVideo) => {
@@ -151,6 +155,11 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     marginVertical: 12,
   },
+  channelName: {
+  fontSize: 14,
+  color: '#666',
+  marginBottom: 12,
+},
 });
 
 export default VideoPlayerScreen;
