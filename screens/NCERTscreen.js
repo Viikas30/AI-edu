@@ -3,6 +3,8 @@ import {
   View, Text, TextInput, Button, ScrollView, StyleSheet,
   ActivityIndicator, Alert,
 } from 'react-native';
+import { useRoute } from '@react-navigation/native';
+
 
 
 const QDRANT_CLOUD_BASE_URL = 'https://1bcdfef2-22c6-44f9-a2fa-adc4a4ca5e4e.europe-west3-0.gcp.cloud.qdrant.io:6333';
@@ -38,12 +40,26 @@ const searchVectors = async (vector, limit = 5) => {
   }
 };
 
+const getTranscriptFromServer = async (videoId) => {
+  console.log('Requesting transcript for videoId:', videoId);
+  const response = await fetch(`http://192.168.31.192:5000/transcript/${videoId}`, {
+    method: 'GET',
+    headers: { 'Content-Type': 'application/json' },
+  });
+  if (!response.ok) throw new Error('Failed to get transcript');
+  const data = await response.json();
+  // data is an array of lines, join to a single string
+  return data.join(' ');
+};
+
 export default function SearchScreen() {
   const [queryText, setQueryText] = useState('');
   const [searchResults, setSearchResults] = useState([]);
   const [loading, setLoading] = useState(false);
 
-
+  const route = useRoute();
+  // Try to get videoId from route params if available
+  const videoId = route.params?.videoId;
 
 const getEmbeddingFromServer = async (text) => {
   const response = await fetch('http://192.168.31.192:3000/embed', {
@@ -62,35 +78,57 @@ const getEmbeddingFromServer = async (text) => {
   return embedding;
 };
 
-
-// ...existing code...
-const handleSearch = async () => {
-  if (!queryText.trim()) {
-    Alert.alert('Input Error', 'Please enter a query.');
-    return;
-  }
-
-  setLoading(true);
-  setSearchResults([]);
-
-  try {
-    console.log('Requesting embedding from server...');
-    const embeddingArray = await getEmbeddingFromServer(queryText);
-    // console.log('Embedding:', embeddingArray, Array.isArray(embeddingArray), 'Length:', embeddingArray.length);
-
-    if (!Array.isArray(embeddingArray) || embeddingArray.some(v => typeof v !== 'number' || isNaN(v))) {
-      throw new Error('Invalid embedding array received from server');
+const handleTranscriptSearch = async () => {
+    if (!videoId) {
+      Alert.alert('No video', 'No videoId provided.');
+      return;
     }
+    setLoading(true);
+    setSearchResults([]);
+    try {
+      const transcript = await getTranscriptFromServer(videoId);
+      if (!transcript || transcript.length < 10) throw new Error('Transcript too short or missing');
+      const embeddingArray = await getEmbeddingFromServer(transcript);
+      if (!Array.isArray(embeddingArray) || embeddingArray.some(v => typeof v !== 'number' || isNaN(v))) {
+        throw new Error('Invalid embedding array received from server');
+      }
+      const results = await searchVectors(embeddingArray, 5);
+      setSearchResults(results);
+    } catch (err) {
+      console.error('Transcript search error:', err);
+      Alert.alert('Transcript Search Failed', err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    const results = await searchVectors(embeddingArray, 5);
-    setSearchResults(results);
-  } catch (err) {
-    console.error('Search error:', err);
-    Alert.alert('Search Failed', err.message);
-  } finally {
-    setLoading(false);
-  }
-};
+// const handleSearch = async () => {
+//   if (!queryText.trim()) {
+//     Alert.alert('Input Error', 'Please enter a query.');
+//     return;
+//   }
+
+//   setLoading(true);
+//   setSearchResults([]);
+
+//   try {
+//     console.log('Requesting embedding from server...');
+//     const embeddingArray = await getEmbeddingFromServer(queryText);
+//     // console.log('Embedding:', embeddingArray, Array.isArray(embeddingArray), 'Length:', embeddingArray.length);
+
+//     if (!Array.isArray(embeddingArray) || embeddingArray.some(v => typeof v !== 'number' || isNaN(v))) {
+//       throw new Error('Invalid embedding array received from server');
+//     }
+
+//     const results = await searchVectors(embeddingArray, 5);
+//     setSearchResults(results);
+//   } catch (err) {
+//     console.error('Search error:', err);
+//     Alert.alert('Search Failed', err.message);
+//   } finally {
+//     setLoading(false);
+//   }
+// };
 // ...existing code...
 
 
@@ -99,18 +137,23 @@ const handleSearch = async () => {
       <Text style={styles.title}>NCERT Search (Executorch)</Text>
 
       <TextInput
-  style={styles.input}
-  placeholder="Enter your query"
-  value={queryText}
-  onChangeText={setQueryText}
-  editable={!loading}
-/>
-<Button
-  title={loading ? 'Searching...' : 'Search'}
-  onPress={handleSearch}
-  disabled={loading || !queryText.trim()}
-/>
-
+        style={styles.input}
+        placeholder="Enter your query"
+        value={queryText}
+        onChangeText={setQueryText}
+        editable={!loading}
+      />
+      {/* <Button
+        title={loading ? 'Searching...' : 'Search'}
+        onPress={handleSearch}
+        disabled={loading || !queryText.trim()}
+      /> */}
+      <Button
+        title={loading ? 'Searching transcript...' : 'Search by Video Transcript'}
+        onPress={handleTranscriptSearch}
+        disabled={loading || !videoId}
+        color="#28a745"
+      />
 
       {loading && (
         <View style={styles.statusMessage}>
