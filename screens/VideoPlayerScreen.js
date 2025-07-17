@@ -9,7 +9,7 @@ import VerticalVideoList from '../components/VerticalVideoList';
 
 
 const fetchAIGeneratedPara = async ({ chapter }) => {
-  const response = await fetch('http://192.168.31.192:3000/ncert-ai', {
+  const response = await fetch('http://<>/ncert-ai', { /* Need to deploy on the backend */ 
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({  chapter }),
@@ -20,7 +20,7 @@ const fetchAIGeneratedPara = async ({ chapter }) => {
 };
 
 const getTranscriptFromServer = async (videoId) => {
-  const response = await fetch(`http://192.168.31.192:5000/transcript/${videoId}`, {
+  const response = await fetch(`http://<>/transcript/${videoId}`, {  /* Need to deploy on the backend */ 
     method: 'GET',
     headers: { 'Content-Type': 'application/json' },
   });
@@ -30,7 +30,7 @@ const getTranscriptFromServer = async (videoId) => {
 };
 
 const getEmbeddingFromServer = async (text) => {
-  const response = await fetch('http://192.168.31.192:3000/embed', {
+  const response = await fetch('http:<>/embed', {  /* Need to deploy on the backend */ 
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ text }),
