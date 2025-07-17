@@ -48,28 +48,64 @@ This is a **React Native** project that allows students to explore **YouTube vid
 - **Backends**: Will be deployed separately (Node.js and Python services).
 
 ---
-##**Steps to run**
-1.Install EAS CLI: npm install -g eas-cli
-2.configure eas.json:
-{
-  "build": {
-    "preview": {
-      "developmentClient": true,
-      "distribution": "internal"
-    },
-    "production": {
-      "developmentClient": false,
-      "distribution": "store"
-    }
-  }
-}
-3.eas build -p android --profile production
-this will generate the apk
-----OR-----
-clone this repo and
-1)cd android
-2)./gradlew assembleRelease
-you will find the apk in: android/app/build/outputs/apk/release/app-release.apk
+## 📦 Steps to Run the App
+
+You can build and run the app using either **EAS CLI** or **Gradle**:
+
+---
+
+### ✅ Option 1: Using EAS CLI (Recommended for Expo Projects)
+
+1. **Install EAS CLI**  
+   ```bash
+   npm install -g eas-cli
+   ```
+
+2. **Configure `eas.json`**  
+   In the root of your project, create a file called `eas.json` with the following content:
+   ```json
+   {
+     "build": {
+       "preview": {
+         "developmentClient": true,
+         "distribution": "internal"
+       },
+       "production": {
+         "developmentClient": false,
+         "distribution": "store"
+       }
+     }
+   }
+   ```
+
+3. **Build the APK**  
+   Run the following command to start the build:
+   ```bash
+   eas build -p android --profile production
+   ```
+
+   This will generate an installable `.apk` file via EAS.
+
+---
+
+### ✅ Option 2: Manual Build Using Gradle
+
+1. **Clone this repository**
+
+2. **Navigate to the android directory**  
+   ```bash
+   cd android
+   ```
+
+3. **Build the release APK**  
+   ```bash
+   ./gradlew assembleRelease
+   ```
+
+4. **Locate the output APK**  
+   You will find the APK at:  
+   ```
+   android/app/build/outputs/apk/release/app-release.apk
 
 
 ⚠️ Important Note
