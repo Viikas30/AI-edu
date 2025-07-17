@@ -82,6 +82,8 @@ In the meantime, the source code for the backend (both Python and Node.js servic
 
 <img src="https://github.com/user-attachments/assets/58205193-61f8-4e6a-b6fb-1cde416db7dc" alt="WhatsApp Image" width="285" height="480"/>
 
+<img src="https://github.com/user-attachments/assets/bdea067b-37b5-4d1e-9151-9c44f58c1b44" alt="WhatsApp Image" width="285" height="480"/>
+
 
 
 
