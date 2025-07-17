@@ -80,7 +80,7 @@ The servers are not yet deployed due to restrictions from services like YouTube 
 In the meantime, the source code for the backend (both Python and Node.js services) can be found in my other repositories.
 
 
-<img src="https://github.com/user-attachments/assets/58205193-61f8-4e6a-b6fb-1cde416db7dc" alt="WhatsApp Image" width="160" height="240"/>
+<img src="https://github.com/user-attachments/assets/58205193-61f8-4e6a-b6fb-1cde416db7dc" alt="WhatsApp Image" width="320" height="480"/>
 
 
 
